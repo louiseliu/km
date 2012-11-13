@@ -1,0 +1,25 @@
+开放实时数据处理平台 Twitter Storm
+
+这是一个分布式的、容错的实时计算系统，它被托管在GitHub上，遵循 Eclipse Public License 1.0。Storm是由BackType开发的实时处理系统，BackType现在已在Twitter麾下。GitHub上的最新版本是Storm 0.5.2，基本是用Clojure写的。
+
+Storm为分布式实时计算提供了一组通用原语，可被用于“流处理”之中，实时处理消息并更新数据库。这是管理队列及工作者集群的另一种方式。 Storm也可被用于“连续计算”（continuous computation），对数据流做连续查询，在计算时就将结果以流的形式输出给用户。它还可被用于“分布式RPC”，以并行的方式运行昂贵的运算。 Storm的主工程师Nathan Marz表示：
+
+Storm可以方便地在一个计算机集群中编写与扩展复杂的实时计算，Storm之于实时处理，就好比 Hadoop之于批处理。Storm保证每个消息都会得到处理，而且它很快——在一个小集群中，每秒可以处理数以百万计的消息。更棒的是你可以使用任意编程语言来做开发。
+Storm的主要特点如下：
+
+简单的编程模型。类似于MapReduce降低了并行批处理复杂性，Storm降低了进行实时处理的复杂性。
+可以使用各种编程语言。你可以在Storm之上使用各种编程语言。默认支持Clojure、Java、Ruby和Python。要增加对其他语言的支持，只需实现一个简单的Storm通信协议即可。
+容错性。Storm会管理工作进程和节点的故障。
+水平扩展。计算是在多个线程、进程和服务器之间并行进行的。
+可靠的消息处理。Storm保证每个消息至少能得到一次完整处理。任务失败时，它会负责从消息源重试消息。
+快速。系统的设计保证了消息能得到快速的处理，使用?MQ作为其底层消息队列。
+本地模式。Storm有一个“本地模式”，可以在处理过程中完全模拟Storm集群。这让你可以快速进行开发和单元测试。
+Storm集群由一个主节点和多个工作节点组成。主节点运行了一个名为“Nimbus”的守护进程，用于分配代码、布置任务及故障检测。每个工作节 点都运行了一个名为“Supervisor”的守护进程，用于监听工作，开始并终止工作进程。Nimbus和Supervisor都能快速失败，而且是无 状态的，这样一来它们就变得十分健壮，两者的协调工作是由Apache ZooKeeper来完成的。
+
+Storm的术语包括Stream、Spout、Bolt、Task、Worker、Stream Grouping和Topology。Stream是被处理的数据。Sprout是数据源。Bolt处理数据。Task是运行于Spout或Bolt中的 线程。Worker是运行这些线程的进程。Stream Grouping规定了Bolt接收什么东西作为输入数据。数据可以随机分配（术语为Shuffle），或者根据字段值分配（术语为Fields），或者 广播（术语为All），或者总是发给一个Task（术语为Global），也可以不关心该数据（术语为None），或者由自定义逻辑来决定（术语为 Direct）。Topology是由Stream Grouping连接起来的Spout和Bolt节点网络。在Storm Concepts页面里对这些术语有更详细的描述。
+
+可以和Storm相提并论的系统有Esper、Streambase、HStreaming和Yahoo S4。其中和Storm最接近的就是S4。两者最大的区别在于Storm会保证消息得到处理。这些系统中有的拥有内建数据存储层，这是Storm所没有的，如果需要持久化，可以使用一个类似于Cassandra或Riak这样的外部数据库。
+
+入门的最佳途径是阅读GitHub上的官方《Storm Tutorial》。 其中讨论了多种Storm概念和抽象，提供了范例代码以便你可以运行一个Storm Topology。开发过程中，可以用本地模式来运行Storm，这样就能在本地开发，在进程中测试Topology。一切就绪后，以远程模式运行 Storm，提交用于在集群中运行的Topology。Maven用户可以使用clojars.org提供的Storm依赖，地址是 http://clojars.org/repo。
+
+要运行Storm集群，你需要Apache Zookeeper、?MQ、JZMQ、Java 6和Python 2.6.6。ZooKeeper用于管理集群中的不同组件，?MQ是内部消息系统，JZMQ是?MQ的Java Binding。有个名为storm-deploy的子项目，可以在AWS上一键部署Storm集群。关于详细的步骤，可以阅读Storm Wiki上的《Setting up a Storm cluster》。
