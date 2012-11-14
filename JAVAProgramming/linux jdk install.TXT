@@ -1,0 +1,19 @@
+linux jdk install
+
+1.
+Type sh name_of_the_downloaded_file, 
+for instance sh jdk-6u2-linux-i586.bin.
+
+2.设置环境变量。 
+#vi /etc/profile 
+在最后面加入 
+#set java environment variables
+export JAVA_HOME=/usr/jdk1.5.0_10
+export PATH=$PATH:$JAVA_HOME/bin
+
+
+Now, if you want to be able to execute this version of Java interpretor 
+or compiler from any directory on your GNU/Linux system you will have to 
+create a few symbolic links:
+ln -s /usr/java/jdk1.6.0/bin/java /usr/bin/java
+ln -s /usr/java/jdk1.6.0/bin/javac /usr/bin/javac
