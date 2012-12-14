@@ -1,0 +1,59 @@
+﻿hadoop用于分布式转码
+总体思路：通过Hadoop Streaming工具实现。
+把要转码的文件通过程序（如：mkvtoolnix）进行分割，把分割后的文件上传到HDFS，
+maper阶段做转码，这样分割成了多少个文件就有多少个maper，reduce阶段做合并，所以reduce只有一个。
+
+1、把需要转码的文件进行分割，把分割完成的文件上传到HDFS的一个目录下(例如：input_video)，
+生成一个文件记录没一个分段文件在HDHS里的路径
+例如：input_1.txt
+/user/gxc/input_video/0001.mp4
+/user/gxc/input_video/0002.mp4
+/user/gxc/input_video/0003.mp4
+/user/gxc/input_video/0004.mp4
+把这个文件(input_1.txt)上传到HDFS的一个目录下(例如：input),这个目录作为hadoop的输入目录
+2、hadoop通过默认的TextInputFormat读取(input_1.txt),读取一行数据交给一个maper去处理，
+maper根据给定的路径，从hdfs取文件到本地，进行转码，转码生成的文件再上传到hdfs，把hdfs路径输出到
+控制台终端，作为reduce的输入
+按照hadoop的默认机制，多少个文件就有多少个任务。
+3、reduce输入为maper转码输出完成的hdfs文件路径列表，这个列表已经被hadoop排序过了。
+把这些文件顺序从hdfs里get到本地目录，然后进行合并生成最终的文件。
+
+参考资料：
+1、http://trac.nchc.org.tw/cloud/wiki/III120211/Lab10
+2、分布式转码系统.zip
+
+
+
+我寫的範例是用五個檔案，每個均內含 20 個待處理的輸入檔案 HDFS 路徑，因此根據 MapReduce 的原理，會得到五個 Mapper。
+以影像壓縮、影像合併為例，則可以將欲處理的視頻影片 HDFS 路徑，依照所希望分散給幾台 Mapper ，將檔名路徑寫到不同的輸入文字檔案。
+如此就可以對他們做處理。
+
+Ex.
+
+我有 100 個視頻影片，檔名分別為 001.avi 、002.avi 、.... 、100.avi
+我有 5 台 TaskTracker 可以執行 MapReduce。
+
+[1] 首先我將 001.avi 到 100.avi 上傳到 HDFS 的 /user/jazz/input_video
+
+[2] 我產生五個檔案，檔名分別為 input_1.txt、input_2.txt、....、input_5.txt
+
+input_1.txt 內容為
+代碼:
+/user/jazz/input_video/001.avi
+/user/jazz/input_video/002.avi
+........... 略 ...............
+/user/jazz/input_video/020.avi
+
+input_2.txt 內容為 021.avi 到 040.avi 的路徑，依此類推。
+
+[3] 將 input_1.txt ~ input_5.txt 上傳至 HDFS 的 /user/jazz/input
+
+[4] 撰寫轉檔的 Script = mapper.sh 裡面去下載 HDFS 的檔案到 Local，然後做轉檔動作，然後再度上傳至 HDFS
+
+[5] 撰寫合併的 Script = reducer.sh 從 HDFS 取回轉檔的中間產物，呼叫合併動作，然後再度上傳至 HDFS
+
+[6] 呼叫 Hadoop Streaming
+
+代碼:
+hadoop jar hadoop-streaming.jar -input input -output output -mapper mapper.sh -reducer reducer.sh
+

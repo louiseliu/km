@@ -1,0 +1,20 @@
+﻿jaxb 更改生成xml是默认的命名空间前缀
+如：
+默认：xmlns:ns2="http://cctv.com/BA1/schema/ProgramQC/1.0"
+希望：xmlns:Q1="http://cctv.com/BA1/schema/ProgramQC/1.0"
+
+修改xjc生成的java文件相应包下的（com/cctv/BA1/schema/programqc/_1/）package-info.java
+annotation添加
+xmlns={@javax.xml.bind.annotation.XmlNs(prefix="Q1", namespaceURI="http://cctv.com/BA1/schema/ProgramQC/1.0")}
+
+即由原来的
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://cctv.com/BA1/schema/ProgramQC/1.0", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED,
+package com.cctv.BA1.schema.programqc._1;
+更改为
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://cctv.com/BA1/schema/ProgramQC/1.0", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED,
+xmlns={@javax.xml.bind.annotation.XmlNs(prefix="Q1", namespaceURI="http://cctv.com/BA1/schema/ProgramQC/1.0")})
+package com.cctv.BA1.schema.programqc._1;
+
+注意：
+jaxb版本2.2.1
+需要lib为：jaxb-api-2.2.1.jar、jaxb-impl-2.2.1.1.jar、jaxb-xjc-2.2.1.1.jar

@@ -1,0 +1,30 @@
+
+使用sys，以sysdba权限登录：
+
+
+SQL> show parameter processes;
+
+NAME TYPE VALUE
+------------------------------------ ----------- ------------------------------
+aq_tm_processes integer 1
+db_writer_processes integer 1
+job_queue_processes integer 10
+log_archive_max_processes integer 1
+processes integer 150
+
+SQL> alter system set processes=300 scope = spfile;
+
+系统已更改。
+
+SQL> show parameter processes;
+
+NAME TYPE VALUE
+------------------------------------ ----------- ------------------------------
+aq_tm_processes integer 1
+db_writer_processes integer 1
+job_queue_processes integer 10
+log_archive_max_processes integer 1
+processes integer 150
+
+
+重启数据库，OK！ 

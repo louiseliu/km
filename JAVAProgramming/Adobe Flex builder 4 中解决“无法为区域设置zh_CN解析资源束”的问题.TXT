@@ -1,0 +1,15 @@
+Adobe Flex builder 4 中解决“无法为区域设置zh_CN解析资源束”的问题
+
+这个问题一直困扰我好几天了，上个月下了一个flex 4 的项目源文件，加载到自己的新建项目中就显示 “无法为区域设置zh_CN解析资源束ViewerStrings   ” 问题，仔细分析了一下，问题出在-locale上。
+
+说明：ViewerStrings是我的一个.properties文件，在locale的zh_CN文件夹中。
+
+解决办法：打开项目属性，在flex编译器中，找到“附加的编译器参数”，默认值是-locale zh_CN（如果是英文版的应该是-locale en_US）；
+
+由于ViewerStrings.properties这一文件没有指定资源路径，所以出现错误，
+
+在“附加的编译器参数”中修改为：-locale zh_CN -source-path=locale/{locale} -keep-all-type-selectors=true；
+
+注：-source-path指定资源路径。
+
+启动编译就可解决问题。

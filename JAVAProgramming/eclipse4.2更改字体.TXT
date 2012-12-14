@@ -1,0 +1,7 @@
+﻿eclipse4.2更改字体
+
+把 YaHei.Consolas.1.12.ttfw 文件复制到 C:\Windows\Fonts 目录下，这样字体就安装完成，
+然后打开 eclipse 的 “preferences” ， “General” -> “Appearance” -> “Colors and Fonts” ,
+打开 “basic” ，双击 “Text Font” ，
+然后选择字体：”YaHei Consolas Hybrid” ，
+确定即可。

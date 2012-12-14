@@ -1,0 +1,28 @@
+获取表的主键列名 SQL
+ select   *   from   user_cons_columns   
+  where   constraint_name   =   (select   constraint_name   from   user_constraints   
+              where   table_name   =   'BST_FAVORITE'  and   constraint_type   ='P');   
+记住:表名要大写
+执行试试,该表所有主键都查出来了,主键列名就在第四列
+获取表的所有列名 SQL
+select * from table_name where rownum=1
+
+这条sql语句相信大家都知道什么意思.
+用jdbc编程查主键列名,可以通过以上第一条语句来查询.
+还有一种方法可以查询表的主键列名,是使用jdbc编程方式,代码如下:
+DatabaseMetaData dbmd=  conn.getMetaData();   
+rs = dbmd.getPrimaryKeys(null,null,tableName.toUpperCase());    //要将表名转为大写才能正确取出主键来
+            
+while   (rs.next()) {
+columnName=rs.getString(4);
+System.out.println(columnName);
+}
+用jdbc获取表的所有列名,也可以通过以上第二条sql语句来获取,具体代码如下:
+String sql="select * from table_name where rownum=1";
+stm=conn.createStatement();
+            rs=stm.executeQuery(sql);
+            rs.next();
+            
+            ResultSetMetaData metadata=rs.getMetaData();
+            for(int i=1;i<=metadata.getColumnCount();i++) {
+                System.out.println(metadata.getColumnName(i));            }
